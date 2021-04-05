@@ -52,6 +52,7 @@ class ArrayMySQL {
 		$values = substr($values, 0,-2);
 		$query = "INSERT INTO $table ($columns) VALUES ($values)";
 		return $this->staticSQL($query);
+		
 	}
 
 	public function selectSQL($table, $columns, $extras){
