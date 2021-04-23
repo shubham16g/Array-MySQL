@@ -1,21 +1,16 @@
 <?php
 class ArrayMySQL {
 	
-	private $conn;
+	// private $conn;
 	private const COLON = "'";
 	
-	public function __construct($configArray) {
-
-		if (isset($configArray['server']) && isset($configArray['user']) && isset($configArray['password']) && isset($configArray['db'])) {
-			
-			$this->conn = mysqli_connect($configArray['server'],$configArray['user'],$configArray['password'],$configArray['db']);
-			mysqli_options($this->conn, MYSQLI_OPT_INT_AND_FLOAT_NATIVE, TRUE);
-		}
-
+	public function __construct(mysqli $db) {
+		$db->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, TRUE);
+		$this->db = $db;
 	}
 
 	public function isConnected(){
-		if ($this->conn) {
+		if ($this->db->isConnected()) {
 			return true;
 		} else {
 			return false;
@@ -71,8 +66,8 @@ class ArrayMySQL {
     }
 
     public function countSQL($table, $extras) {
-    	$result_pages = mysqli_query($this->conn,"SELECT count(*) FROM $table $extras");
-    	return (int) mysqli_fetch_array($result_pages)[0];
+    	$result_pages = $this->db->query("SELECT count(*) FROM $table $extras");
+    	return (int) $result_pages->fetch_array()[0];
     }
 
 	public function staticSQL($query){
@@ -90,15 +85,17 @@ class ArrayMySQL {
 			return null;
 		}
 		$arr = array();
-		while ($row = mysqli_fetch_assoc($res)) {
+		while ($row = $res->fetch_assoc()) {
 			$arr[] = $row;
 		}
-		mysqli_free_result($res);
+
+		// todo
+		// mysqli_free_result($res);
 		return $arr;
 	}
 
 	public function escapeSQL($value){
-		return mysqli_real_escape_string($this->conn, $value);	
+		return $this->db->real_escape_string($value);	
 	}
 
 	private function escapeColonSQL($value) {
@@ -107,13 +104,13 @@ class ArrayMySQL {
 	}
 
 	private function runSQL($query){
-		$res = mysqli_query($this->conn, $query);
+		$res = $this->db->query($query);
 		return $res;
 	}
 
 	public function close()
 	{
-		mysqli_close($this->conn);
+		$this->db->close();
 	}
 }	
 ?>
