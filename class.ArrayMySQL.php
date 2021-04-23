@@ -1,4 +1,13 @@
 <?php
+
+/*
+ArrayMySQL 
+Version: 0.3 Beta
+Developer: Shubham Gupta
+Licence: MIT
+Last Updated: 23 April, 2021 at 6:57 PM GTC +5:30
+*/
+
 class ArrayMySQL
 {
 	public const ERROR_MYSQLI_QUERY_MSG = 'Error in mysqli query';
@@ -113,20 +122,26 @@ class ArrayMySQL
 	private function _prepare_stmt(string $baseQuery, array $array = null)
 	{
 		$count = substr_count($baseQuery, "?");
-		if ($count != sizeof($array)) {
+		if ($count > 0 && $array == null) {
 			throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_MYSQLI_QUERY_CODE);
 		}
 		$ps = '';
-		foreach ($array as $key => $value) {
-			$ps .= 's';
-			$array[$key] = $this->real_escape($value);
+		if ($array != null) {
+			if ($count != sizeof($array)) {
+				throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_MYSQLI_QUERY_CODE);
+			}
+			foreach ($array as $key => $value) {
+				$ps .= 's';
+				$array[$key] = $this->real_escape($value);
+			}
 		}
-
 		$stmt = $this->db->prepare($baseQuery);
 		if (!$stmt) {
 			throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_MYSQLI_QUERY_CODE);
 		}
-		$stmt->bind_param($ps, ...$array);
+		if ($array != null) {
+			$stmt->bind_param($ps, ...$array);
+		}
 		return $stmt;
 	}
 
