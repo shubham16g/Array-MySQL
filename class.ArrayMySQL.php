@@ -2,10 +2,10 @@
 
 /*
 ArrayMySQL 
-Version: 0.3 Beta
+Version: 0.4 Beta
 Developer: Shubham Gupta
 Licence: MIT
-Last Updated: 23 April, 2021 at 6:57 PM GTC +5:30
+Last Updated: 25 April, 2021 at 12:18 PM UTC +5:30
 */
 
 class ArrayMySQL
