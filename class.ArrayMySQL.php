@@ -10,15 +10,14 @@ Last Updated: 23 April, 2021 at 6:57 PM GTC +5:30
 
 class ArrayMySQL
 {
-	public const ERROR_MYSQLI_QUERY_MSG = 'Error in mysqli query';
-	public const ERROR_MYSQLI_QUERY_CODE = 964;
-	public const ERROR_MYSQLI_CONNECT_MSG = 'Error in mysqli connection';
-	public const ERROR_MYSQLI_CONNECT_CODE = 458;
+	private const ERROR_MYSQLI_QUERY_MSG = 'Error in mysqli query';
+	private const ERROR_MYSQLI_CONNECT_MSG = 'Error in mysqli connection';
+	public const ERROR_CODE = 20;
 
 	public function __construct(mysqli $db)
 	{
 		if ($db->connect_errno) {
-			throw new Exception(self::ERROR_MYSQLI_CONNECT_MSG, self::ERROR_MYSQLI_CONNECT_CODE);
+			throw new Exception(self::ERROR_MYSQLI_CONNECT_MSG, self::ERROR_CODE);
 		}
 		$db->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, TRUE);
 		$this->db = $db;
@@ -123,12 +122,12 @@ class ArrayMySQL
 	{
 		$count = substr_count($baseQuery, "?");
 		if ($count > 0 && $array == null) {
-			throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_MYSQLI_QUERY_CODE);
+			throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_CODE);
 		}
 		$ps = '';
 		if ($array != null) {
 			if ($count != sizeof($array)) {
-				throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_MYSQLI_QUERY_CODE);
+				throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_CODE);
 			}
 			foreach ($array as $key => $value) {
 				$ps .= 's';
@@ -137,7 +136,7 @@ class ArrayMySQL
 		}
 		$stmt = $this->db->prepare($baseQuery);
 		if (!$stmt) {
-			throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_MYSQLI_QUERY_CODE);
+			throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_CODE);
 		}
 		if ($array != null) {
 			$stmt->bind_param($ps, ...$array);
