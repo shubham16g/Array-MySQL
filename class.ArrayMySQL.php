@@ -75,7 +75,7 @@ class ArrayMySQL
 		return $this->arraySQL("SELECT $columns FROM $table $extras", $array);
 	}
 
-	public function selectPageSQL(string $table, string $columns, string $extras, array $array = null, int $itemPerPage = 20, int $page = 1,)
+	public function selectPageSQL(string $table, string $columns, string $extras, array $array = null, int $itemPerPage = 20, int $page = 1)
 	{
 		return $this->arrayPageSQL("SELECT $columns FROM $table $extras", $array, $itemPerPage, $page);
 	}
