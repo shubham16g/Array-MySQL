@@ -98,7 +98,7 @@ class ArrayMySQL
 		$stmt->execute();
 	}
 
-	public function arrayPageSQL(string $baseQuery, array $array = null, int $itemPerPage = 20, int $page = 1,)
+	public function arrayPageSQL(string $baseQuery, array $array = null, int $itemPerPage = 20, int $page = 1)
 	{
 		$offset = ($page - 1) * $itemPerPage;
 		$baseQuery .= " LIMIT $offset, $itemPerPage";
