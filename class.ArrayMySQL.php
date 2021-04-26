@@ -75,9 +75,9 @@ class ArrayMySQL
 		return $this->arraySQL("SELECT $columns FROM $table $extras", $array);
 	}
 
-	public function selectPageSQL(int $itemPerPage = 20, int $page = 1, string $table, string $columns, string $extras, array $array = null)
+	public function selectPageSQL(string $table, string $columns, string $extras, array $array = null, int $itemPerPage = 20, int $page = 1,)
 	{
-		return $this->arrayPageSQL($itemPerPage, $page, "SELECT $columns FROM $table $extras", $array);
+		return $this->arrayPageSQL("SELECT $columns FROM $table $extras", $array, $itemPerPage, $page);
 	}
 
 	public function countSQL(string $table, string $extras, array $array)
@@ -86,7 +86,7 @@ class ArrayMySQL
 		return (int) $result_pages[0];
 	}
 
-	public function getPagesCount(string $count, string $itemPerPage = 20)
+	public function getPagesCount(int $count, int $itemPerPage = 20)
 	{
 		$total_pages = ceil($count / $itemPerPage);
 		return (int) $total_pages;
@@ -98,7 +98,7 @@ class ArrayMySQL
 		$stmt->execute();
 	}
 
-	public function arrayPageSQL(int $itemPerPage = 20, int $page = 1, string $baseQuery, array $array = null)
+	public function arrayPageSQL(string $baseQuery, array $array = null, int $itemPerPage = 20, int $page = 1,)
 	{
 		$offset = ($page - 1) * $itemPerPage;
 		$baseQuery .= " LIMIT $offset, $itemPerPage";
