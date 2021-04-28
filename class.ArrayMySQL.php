@@ -5,7 +5,7 @@ ArrayMySQL
 Version: 0.4 Beta
 Developer: Shubham Gupta
 Licence: MIT
-Last Updated: 25 April, 2021 at 12:18 PM UTC +5:30
+Last Updated: 28 April, 2021 at 12:59 PM UTC +5:30
 */
 
 class ArrayMySQL
@@ -40,7 +40,7 @@ class ArrayMySQL
 		foreach ($valueArr as $key => $value) {
 			// $key = $this->escapeColonSQL($key);
 			$columns .= "$key, ";
-			$values .= ",? ";
+			$values .= "?, ";
 			$array[] = $value;
 		}
 		$columns = substr($columns, 0, -2);
@@ -83,7 +83,7 @@ class ArrayMySQL
 	public function countSQL(string $table, string $extras, array $array)
 	{
 		$result_pages = $this->arraySQL("SELECT count(*) FROM $table $extras", $array);
-		return (int) $result_pages[0];
+		return (int)  ($result_pages != null) ? $result_pages[0] : 0 ;
 	}
 
 	public function getPagesCount(int $count, int $itemPerPage = 20)
@@ -94,8 +94,14 @@ class ArrayMySQL
 
 	public function staticSQL(string $baseQuery, array $array = null)
 	{
-		$stmt = $this->_prepare_stmt($baseQuery, $array);
-		$stmt->execute();
+		if ($array == null) {
+			if (!$this->db->query($baseQuery)) {
+				throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_CODE);
+			}
+		} else {
+			$stmt = $this->_prepare_stmt($baseQuery, $array);
+			$stmt->execute();
+		}
 	}
 
 	public function arrayPageSQL(string $baseQuery, array $array = null, int $itemPerPage = 20, int $page = 1)
@@ -107,9 +113,18 @@ class ArrayMySQL
 
 	public function arraySQL(string $baseQuery, array $array = null)
 	{
-		$stmt = $this->_prepare_stmt($baseQuery, $array);
-		$stmt->execute();
-		$res = $stmt->get_result();
+		$res = null;
+		if ($array == null) {
+			$res = $this->db->query($baseQuery);
+			if (!$res) {
+				throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_CODE);
+				
+			}
+		} else {
+			$stmt = $this->_prepare_stmt($baseQuery, $array);
+			$stmt->execute();
+			$res = $stmt->get_result();
+		}
 		$arr = array();
 		while ($row = $res->fetch_assoc()) {
 			$arr[] = $row;
@@ -129,9 +144,9 @@ class ArrayMySQL
 			if ($count != sizeof($array)) {
 				throw new Exception(self::ERROR_MYSQLI_QUERY_MSG, self::ERROR_CODE);
 			}
-			foreach ($array as $key => $value) {
+			foreach ($array as $value) {
 				$ps .= 's';
-				$array[$key] = $this->real_escape($value);
+				// $array[$key] = $value;
 			}
 		}
 		$stmt = $this->db->prepare($baseQuery);
